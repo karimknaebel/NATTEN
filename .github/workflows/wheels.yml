@@ -199,7 +199,6 @@ jobs:
     name: py=${{ matrix.python }} ${{ matrix.build.arch }} cuda=${{ matrix.build.cu_full }} torch=${{ matrix.build.torch }}
     needs: matrix
     runs-on: ${{ matrix.build.runs_on }}
-    timeout-minutes: 360
     strategy:
       fail-fast: false
       max-parallel: 2
