@@ -229,6 +229,7 @@ jobs:
           NATTEN_AUTOGEN_POLICY: default
           PIP_CACHE_DIR: ${{ github.workspace }}/.pip-cache
         run: |
+          set -euo pipefail
           mkdir -p .pip-cache wheel-logs
           ./scripts/packaging/build_wheel.sh 2>&1 | tee "wheel-logs/${{ matrix.build.arch }}-${{ matrix.build.cu_tag }}-torch${{ matrix.build.torch }}-py${{ matrix.python }}.log"
 
