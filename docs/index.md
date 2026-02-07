@@ -89,7 +89,7 @@ attention span in any dimension/axis of your input can be controlled with its re
 
 ## Getting started
 
-NATTEN supports PyTorch >= 2.7, and Python >= 3.9 (everything PyTorch supports).
+NATTEN supports PyTorch >= 2.7, and Python >= 3.10 (everything PyTorch supports).
 Please refer to [install instructions](install.md) for details on how to install NATTEN.
 
 ### :fire: Release `0.21.1`

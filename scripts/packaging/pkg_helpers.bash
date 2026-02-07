@@ -63,12 +63,13 @@ setup_cuda() {
 
 setup_wheel_python() {
   case "$PYTHON_VERSION" in
-    3.9) python_abi=cp39-cp39 ;;
     3.10) python_abi=cp310-cp310 ;;
     3.11) python_abi=cp311-cp311 ;;
     3.12) python_abi=cp312-cp312 ;;
     3.13) python_abi=cp313-cp313 ;;
     3.13t) python_abi=cp313-cp313t ;;
+    3.14) python_abi=cp314-cp314 ;;
+    3.14t) python_abi=cp314-cp314t ;;
     *)
       echo "Unrecognized PYTHON_VERSION=$PYTHON_VERSION"
       exit 1

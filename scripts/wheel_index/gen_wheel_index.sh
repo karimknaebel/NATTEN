@@ -44,15 +44,10 @@ check_one() {
     exit 1
   fi
 
-  # Torch 2.9 no longer ships for python 3.9.
-  if [[ $torch_major -lt 29 ]]; then
-    py_versions+=(3.9)
-  fi
-
   if [[ $natten_minor -ge 211 ]]; then
     # Torch started supporting python 3.13 since ~2.5
-    # We are building wheels for 3.13 starting 0.21.1
-    py_versions+=(3.13 3.13t)
+    # We are building wheels for 3.13 and 3.14 starting 0.21.1
+    py_versions+=(3.13 3.13t 3.14 3.14t)
 
     # Torch also started shipping arm CUDA builds since 2.9.
     # NATTEN started since 0.21.1
@@ -122,13 +117,17 @@ check_one 0.21.0 cu128 2.7.0 $URL_PREFIX
 check_one 0.21.0 cu126 2.7.0 $URL_PREFIX
 
 # v0.21.1
-check_one 0.21.1 cu129 2.8.0 $URL_PREFIX
-check_one 0.21.1 cu128 2.8.0 $URL_PREFIX
-check_one 0.21.1 cu126 2.8.0 $URL_PREFIX
+check_one 0.21.1 cu130 2.10.0 $URL_PREFIX
+check_one 0.21.1 cu128 2.10.0 $URL_PREFIX
+check_one 0.21.1 cu126 2.10.0 $URL_PREFIX
 
 check_one 0.21.1 cu130 2.9.0 $URL_PREFIX
 check_one 0.21.1 cu128 2.9.0 $URL_PREFIX
 check_one 0.21.1 cu126 2.9.0 $URL_PREFIX
+
+check_one 0.21.1 cu129 2.8.0 $URL_PREFIX
+check_one 0.21.1 cu128 2.8.0 $URL_PREFIX
+check_one 0.21.1 cu126 2.8.0 $URL_PREFIX
 
 ##################################
 ##################################

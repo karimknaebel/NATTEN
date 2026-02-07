@@ -17,17 +17,12 @@ check_one() {
   torch_major=$(echo $pytorch_ver | awk -F"." '{print $1$2}')  # 29 (pytorch major version)
 
   # Torch started supporting python 3.13 since ~2.5
-  # We are building wheels for 3.13 starting 0.21.1
-  py_versions=(3.10 3.11 3.12 3.13 3.13t)
+  # We are building wheels for 3.13 and 3.14 starting 0.21.1
+  py_versions=(3.10 3.11 3.12 3.13 3.13t 3.14 3.14t)
 
   if [[ $torch_major -lt 27 ]]; then
     echo "Only torch 2.7 and later are supported from now on."
     exit 1
-  fi
-
-  # Torch 2.9 no longer ships for python 3.9.
-  if [[ $torch_major -lt 29 ]]; then
-    py_versions+=(3.9)
   fi
 
   # Torch also started shipping arm builds since 2.8.
@@ -52,6 +47,11 @@ check_one() {
     done
   done
 }
+
+# Torch 2.10.X
+check_one cu130 2.10.0
+check_one cu128 2.10.0
+check_one cu126 2.10.0
 
 # Torch 2.9.X
 check_one cu130 2.9.0
