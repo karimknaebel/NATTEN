@@ -1,0 +1,182 @@
+name: Build Wheels
+
+on:
+  workflow_dispatch:
+    inputs:
+      torch:
+        description: "Torch version"
+        type: choice
+        options: [all, "2.10.0", "2.9.0", "2.8.0"]
+        default: all
+      python:
+        description: "Python version"
+        type: choice
+        options: [all, "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
+        default: all
+      cuda:
+        description: "CUDA tag"
+        type: choice
+        options: [all, cu130, cu129, cu128, cu126]
+        default: all
+      max_parallel:
+        description: "Max parallel matrix jobs"
+        type: number
+        default: 2
+  release:
+    types: [published]
+
+concurrency:
+  group: wheels-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  wheels:
+    name: py=${{ matrix.python }} ${{ matrix.build.arch }} cuda=${{ matrix.build.cu_full }} torch=${{ matrix.build.torch }}
+    runs-on: ${{ matrix.build.runs_on }}
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ inputs.max_parallel || 2 }}
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
+        build:
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda13.0
+            cu_tag: cu130
+            torch: "2.10.0"
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda12.8
+            cu_tag: cu128
+            torch: "2.10.0"
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda12.6
+            cu_tag: cu126
+            torch: "2.10.0"
+
+          - arch: arm64
+            runs_on: ubuntu-24.04-arm
+            image: pytorch/manylinuxaarch64-builder
+            cu_full: cuda13.0
+            cu_tag: cu130
+            torch: "2.10.0"
+          - arch: arm64
+            runs_on: ubuntu-24.04-arm
+            image: pytorch/manylinuxaarch64-builder
+            cu_full: cuda12.8
+            cu_tag: cu128
+            torch: "2.10.0"
+          - arch: arm64
+            runs_on: ubuntu-24.04-arm
+            image: pytorch/manylinuxaarch64-builder
+            cu_full: cuda12.6
+            cu_tag: cu126
+            torch: "2.10.0"
+
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda13.0
+            cu_tag: cu130
+            torch: "2.9.0"
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda12.8
+            cu_tag: cu128
+            torch: "2.9.0"
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda12.6
+            cu_tag: cu126
+            torch: "2.9.0"
+
+          - arch: arm64
+            runs_on: ubuntu-24.04-arm
+            image: pytorch/manylinuxaarch64-builder
+            cu_full: cuda13.0
+            cu_tag: cu130
+            torch: "2.9.0"
+          - arch: arm64
+            runs_on: ubuntu-24.04-arm
+            image: pytorch/manylinuxaarch64-builder
+            cu_full: cuda12.8
+            cu_tag: cu128
+            torch: "2.9.0"
+          - arch: arm64
+            runs_on: ubuntu-24.04-arm
+            image: pytorch/manylinuxaarch64-builder
+            cu_full: cuda12.6
+            cu_tag: cu126
+            torch: "2.9.0"
+
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda12.9
+            cu_tag: cu129
+            torch: "2.8.0"
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda12.8
+            cu_tag: cu128
+            torch: "2.8.0"
+          - arch: amd64
+            runs_on: ubuntu-24.04
+            image: pytorch/manylinux2_28-builder
+            cu_full: cuda12.6
+            cu_tag: cu126
+            torch: "2.8.0"
+    if: >
+      ${{
+        github.event_name == 'release' ||
+        (
+          github.event_name == 'workflow_dispatch' &&
+          (inputs.torch == 'all' || inputs.torch == matrix.build.torch) &&
+          (inputs.python == 'all' || inputs.python == matrix.python) &&
+          (inputs.cuda == 'all' || inputs.cuda == matrix.build.cu_tag)
+        )
+      }}
+
+    container:
+      image: ${{ matrix.build.image }}:${{ matrix.build.cu_full }}-main
+      options: --ipc=host --ulimit memlock=-1 --ulimit stack=67108864
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/cache@v4
+        with:
+          path: .pip-cache
+          key: pip-${{ runner.os }}-${{ runner.arch }}-${{ matrix.build.cu_tag }}-${{ matrix.build.torch }}
+
+      - name: Build wheel
+        env:
+          CU_VERSION: ${{ matrix.build.cu_tag }}
+          PYTORCH_VERSION: ${{ matrix.build.torch }}
+          PYTHON_VERSION: ${{ matrix.python }}
+          OUTPUT_DIR: ${{ github.workspace }}
+          NATTEN_N_WORKERS: 2
+          NATTEN_AUTOGEN_POLICY: default
+          PIP_CACHE_DIR: ${{ github.workspace }}/.pip-cache
+        run: |
+          mkdir -p .pip-cache wheel-logs
+          ./scripts/packaging/build_wheel.sh 2>&1 | tee "wheel-logs/${{ matrix.build.arch }}-${{ matrix.build.cu_tag }}-torch${{ matrix.build.torch }}-py${{ matrix.python }}.log"
+
+      - name: Upload wheels
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.build.arch }}-${{ matrix.build.cu_tag }}-torch${{ matrix.build.torch }}-py${{ matrix.python }}
+          path: |
+            wheels/${{ matrix.build.cu_tag }}/torch${{ matrix.build.torch }}/
+            wheel-logs/
