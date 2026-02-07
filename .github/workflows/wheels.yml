@@ -1,5 +1,8 @@
 name: Build Wheels
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -209,7 +212,7 @@ jobs:
       options: --ipc=host --ulimit memlock=-1 --ulimit stack=67108864
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
@@ -225,9 +228,15 @@ jobs:
         run: ./scripts/packaging/build_wheel.sh
 
       - name: Upload wheels
-        if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: wheels-${{ matrix.build.arch }}-${{ matrix.build.cu_tag }}-torch${{ matrix.build.torch }}-py${{ matrix.python }}
-          path: |
-            wheels/${{ matrix.build.cu_tag }}/torch${{ matrix.build.torch }}/
+          path: wheels/${{ matrix.build.cu_tag }}/torch${{ matrix.build.torch }}/
+          if-no-files-found: error
+
+      - name: Upload release wheels
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: wheels/${{ matrix.build.cu_tag }}/torch${{ matrix.build.torch }}/*.whl
+          fail_on_unmatched_files: true
