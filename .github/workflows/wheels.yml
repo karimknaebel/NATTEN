@@ -220,7 +220,7 @@ jobs:
           PYTORCH_VERSION: ${{ matrix.build.torch }}
           PYTHON_VERSION: ${{ matrix.python }}
           OUTPUT_DIR: ${{ github.workspace }}
-          NATTEN_N_WORKERS: 2
+          NATTEN_N_WORKERS: 1
           NATTEN_AUTOGEN_POLICY: coarse
           PIP_NO_CACHE_DIR: 1
         run: ./scripts/packaging/build_wheel.sh
