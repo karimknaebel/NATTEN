@@ -22,37 +22,37 @@ setup_cuda() {
       cuda_path=/usr/local/cuda-13.0/
       export PATH=${cuda_path}/bin${PATH:+:${PATH}}
       export LD_LIBRARY_PATH=${cuda_path}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-      export TORCH_CUDA_ARCH_LIST="7.5;8.0;8.6;8.9;9.0;10.0;10.3;12.0"
+      export TORCH_CUDA_ARCH_LIST="8.0;8.6;8.9;9.0"
       ;;
     cu129)
       cuda_path=/usr/local/cuda-12.9/
       export PATH=${cuda_path}/bin${PATH:+:${PATH}}
       export LD_LIBRARY_PATH=${cuda_path}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-      export TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6;8.9;9.0;10.0;10.3;12.0"
+      export TORCH_CUDA_ARCH_LIST="8.0;8.6;8.9;9.0"
       ;;
     cu128)
       cuda_path=/usr/local/cuda-12.8/
       export PATH=${cuda_path}/bin${PATH:+:${PATH}}
       export LD_LIBRARY_PATH=${cuda_path}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-      export TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6;8.9;9.0;10.0;12.0"
+      export TORCH_CUDA_ARCH_LIST="8.0;8.6;8.9;9.0"
       ;;
     cu126)
       cuda_path=/usr/local/cuda-12.6/
       export PATH=${cuda_path}/bin${PATH:+:${PATH}}
       export LD_LIBRARY_PATH=${cuda_path}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-      export TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6;8.9;9.0"
+      export TORCH_CUDA_ARCH_LIST="8.0;8.6;8.9;9.0"
       ;;
     cu124)
       cuda_path=/usr/local/cuda-12.4/
       export PATH=${cuda_path}/bin${PATH:+:${PATH}}
       export LD_LIBRARY_PATH=${cuda_path}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-      export TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6;8.9;9.0"
+      export TORCH_CUDA_ARCH_LIST="8.0;8.6;8.9;9.0"
       ;;
     cu121)
       cuda_path=/usr/local/cuda-12.1/
       export PATH=${cuda_path}/bin${PATH:+:${PATH}}
       export LD_LIBRARY_PATH=${cuda_path}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-      export TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6;8.9;9.0"
+      export TORCH_CUDA_ARCH_LIST="8.0;8.6;8.9;9.0"
       ;;
     *)
       echo "Unrecognized CU_VERSION=$CU_VERSION"
