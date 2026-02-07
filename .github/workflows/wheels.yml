@@ -19,7 +19,7 @@ on:
       cuda:
         description: "CUDA tag"
         type: choice
-        options: [all, cu130, cu129, cu128, cu126]
+        options: [all, cu130, cu129, cu128, cu126, cpu]
         default: all
   release:
     types: [published]
@@ -60,128 +60,142 @@ jobs:
           if python != "all":
             python_versions = [python]
 
-          builds = [
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda13.0",
-              "cu_tag": "cu130",
-              "torch": "2.10.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda12.8",
-              "cu_tag": "cu128",
-              "torch": "2.10.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda12.6",
-              "cu_tag": "cu126",
-              "torch": "2.10.0",
-            },
-            {
-              "arch": "arm64",
-              "runs_on": "ubuntu-24.04-arm",
-              "image": "pytorch/manylinuxaarch64-builder",
-              "cu_full": "cuda13.0",
-              "cu_tag": "cu130",
-              "torch": "2.10.0",
-            },
-            {
-              "arch": "arm64",
-              "runs_on": "ubuntu-24.04-arm",
-              "image": "pytorch/manylinuxaarch64-builder",
-              "cu_full": "cuda12.8",
-              "cu_tag": "cu128",
-              "torch": "2.10.0",
-            },
-            {
-              "arch": "arm64",
-              "runs_on": "ubuntu-24.04-arm",
-              "image": "pytorch/manylinuxaarch64-builder",
-              "cu_full": "cuda12.6",
-              "cu_tag": "cu126",
-              "torch": "2.10.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda13.0",
-              "cu_tag": "cu130",
-              "torch": "2.9.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda12.8",
-              "cu_tag": "cu128",
-              "torch": "2.9.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda12.6",
-              "cu_tag": "cu126",
-              "torch": "2.9.0",
-            },
-            {
-              "arch": "arm64",
-              "runs_on": "ubuntu-24.04-arm",
-              "image": "pytorch/manylinuxaarch64-builder",
-              "cu_full": "cuda13.0",
-              "cu_tag": "cu130",
-              "torch": "2.9.0",
-            },
-            {
-              "arch": "arm64",
-              "runs_on": "ubuntu-24.04-arm",
-              "image": "pytorch/manylinuxaarch64-builder",
-              "cu_full": "cuda12.8",
-              "cu_tag": "cu128",
-              "torch": "2.9.0",
-            },
-            {
-              "arch": "arm64",
-              "runs_on": "ubuntu-24.04-arm",
-              "image": "pytorch/manylinuxaarch64-builder",
-              "cu_full": "cuda12.6",
-              "cu_tag": "cu126",
-              "torch": "2.9.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda12.9",
-              "cu_tag": "cu129",
-              "torch": "2.8.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda12.8",
-              "cu_tag": "cu128",
-              "torch": "2.8.0",
-            },
-            {
-              "arch": "amd64",
-              "runs_on": "ubuntu-24.04",
-              "image": "pytorch/manylinux2_28-builder",
-              "cu_full": "cuda12.6",
-              "cu_tag": "cu126",
-              "torch": "2.8.0",
-            },
-          ]
+          if cuda == "cpu":
+            torch_versions = ["2.10.0", "2.9.0", "2.8.0"] if torch == "all" else [torch]
+            builds = [
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.6",
+                "cu_tag": "cpu",
+                "torch": t,
+              }
+              for t in torch_versions
+            ]
+          else:
+            builds = [
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda13.0",
+                "cu_tag": "cu130",
+                "torch": "2.10.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.8",
+                "cu_tag": "cu128",
+                "torch": "2.10.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.6",
+                "cu_tag": "cu126",
+                "torch": "2.10.0",
+              },
+              {
+                "arch": "arm64",
+                "runs_on": "ubuntu-24.04-arm",
+                "image": "pytorch/manylinuxaarch64-builder",
+                "cu_full": "cuda13.0",
+                "cu_tag": "cu130",
+                "torch": "2.10.0",
+              },
+              {
+                "arch": "arm64",
+                "runs_on": "ubuntu-24.04-arm",
+                "image": "pytorch/manylinuxaarch64-builder",
+                "cu_full": "cuda12.8",
+                "cu_tag": "cu128",
+                "torch": "2.10.0",
+              },
+              {
+                "arch": "arm64",
+                "runs_on": "ubuntu-24.04-arm",
+                "image": "pytorch/manylinuxaarch64-builder",
+                "cu_full": "cuda12.6",
+                "cu_tag": "cu126",
+                "torch": "2.10.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda13.0",
+                "cu_tag": "cu130",
+                "torch": "2.9.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.8",
+                "cu_tag": "cu128",
+                "torch": "2.9.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.6",
+                "cu_tag": "cu126",
+                "torch": "2.9.0",
+              },
+              {
+                "arch": "arm64",
+                "runs_on": "ubuntu-24.04-arm",
+                "image": "pytorch/manylinuxaarch64-builder",
+                "cu_full": "cuda13.0",
+                "cu_tag": "cu130",
+                "torch": "2.9.0",
+              },
+              {
+                "arch": "arm64",
+                "runs_on": "ubuntu-24.04-arm",
+                "image": "pytorch/manylinuxaarch64-builder",
+                "cu_full": "cuda12.8",
+                "cu_tag": "cu128",
+                "torch": "2.9.0",
+              },
+              {
+                "arch": "arm64",
+                "runs_on": "ubuntu-24.04-arm",
+                "image": "pytorch/manylinuxaarch64-builder",
+                "cu_full": "cuda12.6",
+                "cu_tag": "cu126",
+                "torch": "2.9.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.9",
+                "cu_tag": "cu129",
+                "torch": "2.8.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.8",
+                "cu_tag": "cu128",
+                "torch": "2.8.0",
+              },
+              {
+                "arch": "amd64",
+                "runs_on": "ubuntu-24.04",
+                "image": "pytorch/manylinux2_28-builder",
+                "cu_full": "cuda12.6",
+                "cu_tag": "cu126",
+                "torch": "2.8.0",
+              },
+            ]
 
           if torch != "all":
             builds = [b for b in builds if b["torch"] == torch]

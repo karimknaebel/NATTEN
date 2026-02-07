@@ -18,6 +18,10 @@ setup_cuda() {
   # and https://github.com/pytorch/vision/blob/main/packaging/pkg_helpers.bash for reference.
   export FORCE_CUDA=1
   case "$CU_VERSION" in
+    cpu)
+      export FORCE_CUDA=0
+      export TORCH_CUDA_ARCH_LIST=""
+      ;;
     cu130)
       cuda_path=/usr/local/cuda-13.0/
       export PATH=${cuda_path}/bin${PATH:+:${PATH}}

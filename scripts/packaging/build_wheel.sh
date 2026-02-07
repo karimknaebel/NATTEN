@@ -46,11 +46,17 @@ pip_install \
 
 pip_install "cmake==4.1.0"
 
-# Print torch version and support acrhs
-python -c "import torch;\
-print(f\"Current torch version: {torch.__version__}\");\
-print(f\"Current torch CUDA support (build and runtime): {torch.cuda.is_available()=}\");\
-print(f\"Architectures current torch was built for: {torch._C._cuda_getArchFlags()}\");"
+# Print torch version and support archs
+python - <<'PY'
+import torch
+
+print(f"Current torch version: {torch.__version__}")
+print(f"Current torch CUDA support (build and runtime): {torch.cuda.is_available()=}")
+if torch.version.cuda is not None and hasattr(torch._C, "_cuda_getArchFlags"):
+    print(f"Architectures current torch was built for: {torch._C._cuda_getArchFlags()}")
+else:
+    print("Architectures current torch was built for: (cpu-only)")
+PY
 
 echo "Building NATTEN ..."
 
